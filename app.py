@@ -1,8 +1,9 @@
 from playwright.sync_api import sync_playwright
 import requests
+from job import Job
 import time
 from bs4 import BeautifulSoup
-import csv
+from file import save_to_file
 
 """
 time.sleep(3)
@@ -15,23 +16,6 @@ time.sleep(4)
 page.click("a#search_tab_position")
 time.sleep(4)
 """
-class Job:
-  def __init__(self, title, company, url, region = "No Region Info", salary = "No Salary Info", position = "No Position Info"):
-    self.title = title 
-    self.company = company
-    self.url = url
-    self.region = region
-    self.salary = salary
-    self.position = position
-
-  def get_parameters():
-     return ["Title","Company","Url","Position","Region","Salary"]
-  
-  def get_values(self):
-     return [self.title, self.company, self.url, self.position, self.region, self.salary]
-  
-  def __str__(self):
-    return f"Title: {self.title}\nCompany: {self.company}\nPosition: {self.position}\nRegion: {self.region}\nSalary: {self.salary}\nURL: {self.url}\n"
 
 keywords = ["flutter", "golang", "python"]
 jobs_db = []
@@ -63,16 +47,8 @@ def scrape_wanted_jobs():
     page.goto(f"https://www.wanted.co.kr/search?query={key}&tab=position")
     scrape_jobs(page)
     time.sleep(7)
-    jobs_to_excel("wanted", key)
+    save_to_file(f"wanted_{key}", jobs_db)
   p.stop()
-
-def jobs_to_excel(source_name, job_type):
-    file = open(f"{source_name}_{job_type}_jobs.csv", "w")
-    writer = csv.writer(file)
-    writer.writerow(Job.get_parameters())
-    for job in jobs_db:
-        writer.writerow(job.get_values())
-    file.close()
 
 def scrape_remoteok_jobs():
   def scrape_jobs(url):
@@ -117,18 +93,31 @@ def scrape_remoteok_jobs():
             jobs_db.append(Job(title.strip(), company.strip(), f"https://remoteok.com{url}", region.strip(), salary.strip()))
     else:
         print(f"request error with {r.content}")
+
   for key in keywords:
     url = f"https://remoteok.com/remote-{key}-jobs"
     scrape_jobs(url)
-    jobs_to_excel("remoteok", key)
+    if len(jobs_db) > 0:
+      save_to_file(f"remoteok_{key}", jobs_db)
 
 def scrape_weworkremotely():
 
   def scrape_page(url):
+    """
     response = requests.get(url,
                             headers={"User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36"})
-    print(f"scraping {url}")
-    soup = BeautifulSoup(response.content, "html.parser")
+    
+    content = response.content
+    """
+    response = None
+    # read local file if access is defied
+    if response == None or response.status_code != 200 :
+      f = open("weworkremotely.html", encoding="utf8")
+      content = f
+      
+      print("reading local file")
+      
+    soup = BeautifulSoup(content, "html.parser")
 
     #used to be category-2
     jobs = soup.find("section", class_ = "jobs").find_all("li")[0:-1] # eliminate the first and last item
@@ -159,10 +148,16 @@ def scrape_weworkremotely():
         "region": "No Region" if not region else region[0].text,
         "url": f"https://weworkremotely.com{url}"
       }
+      url = f"https://weworkremotely.com{url}"
       #position is full-time/contract info
       region = "No Region" if not region else region[0].text
-      jobs_db.append(Job(title, company.text.strip(), position.text.strip(), region, None, position.text.strip()))
-
+      jobs_db.append(Job(title = title, 
+                         company = company.text.strip(), 
+                         url = url, 
+                         region = region, 
+                         position = position.text.strip()))
+      f.close()
+    
   def get_pages(url):
     response = requests.get(url,
                             headers={"User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36"})
@@ -170,22 +165,22 @@ def scrape_weworkremotely():
       soup = BeautifulSoup(response.content, "html.parser")
       return len(soup.find("span", class_= "pages-container").find_all("span", class_= "page"))
     else:
-       raise Exception(f"Cannot access the site ({response.status_code})")
+       raise print(f"Cannot access the site ({response.status_code})")
 
-  url = "https://weworkremotely.com/remote-full-time-jobs"
+  url = "https://weworkremotely.com" #/categories/remote-full-stack-programming-jobs" #remote-full-time-jobs"
+  """
   pages = get_pages(url)
   for page in range(pages):
     url = f"https://weworkremotely.com/remote-full-time-jobs?page={page+1}"
     scrape_page(url)
-  jobs_to_excel()
+  """
+  scrape_page(url)
+  if len(jobs_db) > 0:
+    save_to_file("weworkremotely", jobs_db)
 
 #scrape_weworkremotely() ## request issues
 
-scrape_remoteok_jobs()
-scrape_wanted_jobs()
-        
-# create new csv file for each job
-# put all the code in functions
-# change structure to OOP
-# combine all the scrapers for different websites
+#scrape_wanted_jobs()
+#scrape_remoteok_jobs()
+scrape_weworkremotely()
 
