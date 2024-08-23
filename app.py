@@ -166,9 +166,11 @@ def scrape_weworkremotely():
   def get_pages(url):
     response = requests.get(url,
                             headers={"User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36"})
-    print(response.status_code)
-    soup = BeautifulSoup(response.content, "html.parser")
-    return len(soup.find("span", class_= "pages-container").find_all("span", class_= "page"))
+    if(response.status_code == 200):
+      soup = BeautifulSoup(response.content, "html.parser")
+      return len(soup.find("span", class_= "pages-container").find_all("span", class_= "page"))
+    else:
+       raise Exception(f"Cannot access the site ({response.status_code})")
 
   url = "https://weworkremotely.com/remote-full-time-jobs"
   pages = get_pages(url)
@@ -179,8 +181,8 @@ def scrape_weworkremotely():
 
 #scrape_weworkremotely() ## request issues
 
-#scrape_remoteok_jobs()
-#scrape_wanted_jobs()
+scrape_remoteok_jobs()
+scrape_wanted_jobs()
         
 # create new csv file for each job
 # put all the code in functions
