@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Scrapper</title>
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
+</head>
+<body>
+    <main class="container">
+        <h1>Serch Result for "{{keyword}}": </h1>
+        <table class="striped">
+          <thead data-theme="dark">
+            <tr>
+              <th scope="col">Title</th>
+              <th scope="col">Company</th>
+              <th scope="col">Region</th>
+              <th scope="col">Salary</th>
+              <th scope="col">Position</th>
+              <th scope="col">Link</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for job in jobs %}
+              <tr>
+                <td>{{job.title}}</td>
+                <td>{{job.company}}</td>
+                <td>{{job.region}}</td>
+                <td>{{job.salary}}</td>
+                <td>{{job.position}}</td>
+                <td><a href="{{job.url}}" target="_blank">Apply now &rarr;</a></td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        
+      </main>
+</body>
+</html>

@@ -50,7 +50,7 @@ def scrape_wanted_jobs():
     save_to_file(f"wanted_{key}", jobs_db)
   p.stop()
 
-def scrape_remoteok_jobs(testing=False):
+def scrape_remoteok_jobs(keyword, testing=False):
   
   def parse_html(content):
     soup = BeautifulSoup(content, "html.parser")
@@ -103,14 +103,17 @@ def scrape_remoteok_jobs(testing=False):
       parse_html(f)
       f.close()
 
-  for key in keywords:
-    if not testing:
-      url = f"https://remoteok.com/remote-{key}-jobs"
-    else:
-       url = f"remoteok_{key}.html"
-    scrape_jobs(url)
-    if len(jobs_db) > 0:
-      save_to_file(f"remoteok_{key}", jobs_db)
+  if keyword != None or keyword == "":
+     scrape_jobs(f"html/remoteok_{keyword}.html") #normally need to request on the website but I'm blocked
+  else:
+    for key in keywords:
+        if not testing:
+            url = f"https://remoteok.com/remote-{key}-jobs"
+        else:
+            url = f"html/remoteok_{key}.html"
+            scrape_jobs(url)
+            if len(jobs_db) > 0:
+                save_to_file(f"remoteok_{key}", jobs_db)
 
 def scrape_weworkremotely(testing=False):
 
@@ -178,10 +181,12 @@ def scrape_weworkremotely(testing=False):
       scrape_page(url)
       save_to_file("weworkremotely", jobs_db) 
   else:
-      scrape_page("weworkremotely.html")
+      scrape_page("html/weworkremotely.html")
       save_to_file("weworkremotely", jobs_db) 
 
 #scrape_weworkremotely() ## request issues
 
-
+#scrape_wanted_jobs()
+#scrape_remoteok_jobs(True)
+#scrape_weworkremotely(True)
 
