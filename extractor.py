@@ -50,70 +50,6 @@ def scrape_wanted_jobs():
     save_to_file(f"wanted_{key}", jobs_db)
   p.stop()
 
-def scrape_remoteok_jobs(keyword, testing=False):
-  
-  def parse_html(content):
-    soup = BeautifulSoup(content, "html.parser")
-    jobs = soup.find("table", id = "jobsboard").find_all("tr", class_ = "job")
-
-    for job in jobs:
-        title = job.find("h2").text
-        company = job.find("h3").text
-
-        region_salary = job.find_all("div", class_ = "location")
-        region = ""
-        salary = ""
-    
-        if len(region_salary) > 0 :
-            all_regions = []
-            for i in region_salary:# everything except last item
-                if "$" in i.text:
-                    salary = i.text
-                    break  # do not care after salary info
-                else:
-                    all_regions.append(i.text)
-            region = ", ".join(all_regions)  
-        
-        region = "No region" if len(region) == 0 else region
-        salary = "No salary info" if len(salary) == 0 else salary
-    
-        """
-        try:
-            salary = job.find('div', class_='location tooltip').text.strip()
-        except AttributeError:
-            salary = 'no data'
-        """
-        #another way
-        #url = job.find("a", itemprop="url")["href"]
-        url = job.find("a", class_ = "preventLink")["href"]
-        jobs_db.append(Job(title.strip(), company.strip(), f"https://remoteok.com{url}", region.strip(), salary.strip()))
-        
-  def scrape_jobs(url):
-    jobs_db.clear()
-    if not testing:
-      r = requests.get(url, 
-                   headers={"User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"})
-
-      if (r.status_code == 200):
-        parse_html(r.content)
-      else:
-        print(f"request error with {r.content}")
-    else:
-      f = open(url, encoding="utf8")
-      parse_html(f)
-      f.close()
-
-  if keyword != None or keyword == "":
-     scrape_jobs(f"html/remoteok_{keyword}.html") #normally need to request on the website but I'm blocked
-  else:
-    for key in keywords:
-        if not testing:
-            url = f"https://remoteok.com/remote-{key}-jobs"
-        else:
-            url = f"html/remoteok_{key}.html"
-            scrape_jobs(url)
-            if len(jobs_db) > 0:
-                save_to_file(f"remoteok_{key}", jobs_db)
 
 def scrape_weworkremotely(testing=False):
 
@@ -187,6 +123,6 @@ def scrape_weworkremotely(testing=False):
 #scrape_weworkremotely() ## request issues
 
 #scrape_wanted_jobs()
-#scrape_remoteok_jobs(True)
+#scrape_remoteok_jobs("python")
 #scrape_weworkremotely(True)
 

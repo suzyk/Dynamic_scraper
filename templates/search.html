@@ -6,11 +6,16 @@
     <title>Job Scrapper</title>
     <link
         rel="stylesheet"
-        href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
+        href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+    <link rel="stylesheet" href="/static/search.css">
 </head>
 <body>
     <main class="container">
-        <h1>Serch Result for "{{keyword}}": </h1>
+        <hgroup>
+          <h1>Search Result for <span class="emphasize">"{{keyword}}"</span>: </h1>
+          <h4><span class="emphasize">{{count}}</span> jobs found</h4>
+          <a target="_blank" href="/export?keyword={{keyword}}">Export to file</a>
+        </hgroup>
         <table class="striped">
           <thead data-theme="dark">
             <tr>
