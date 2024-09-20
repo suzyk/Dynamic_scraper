@@ -1,7 +1,8 @@
 import requests
-from job import Job
+from util.job import Job
 from bs4 import BeautifulSoup
 
+headers = {"User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"}
 def parse_html(content):
     result = []
     soup = BeautifulSoup(content, "html.parser")
@@ -37,8 +38,7 @@ def parse_html(content):
 def scrape_remoteok_jobs(keyword, testing=False):
     if not testing:
       url = f"https://remoteok.com/remote-{keyword}-jobs"
-      r = requests.get(url, 
-                   headers={"User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"})
+      r = requests.get(url, headers=headers)
 
       if (r.status_code == 200):
         return parse_html(r.content)

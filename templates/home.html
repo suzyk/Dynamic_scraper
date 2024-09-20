@@ -1,25 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Job Scrapper</title>
-    <link
-        rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
-        <!--"https://unpkg.com/@picocss/pico@latest/css/pico.min.css"-->
-        <link rel="stylesheet" href="/static/style.css">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Job Scrapper</title>
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <script src="https://kit.fontawesome.com/5099af3658.js" crossorigin="anonymous"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:wght@300;400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <main class = "container-fluid">
-        <div class = "center">
-          <h1>Job scrapper</h1>
-          <h4>What job do you want?</h4>
-          <form action="/search">
-            <input type="text" name="keyword" placeholder="write keyword please.." />
-            <button>Search</button>
+ 
+  <main class = "container">
+    <div class = "center">
+      <div class = "search_box">
+        <h1>What job do you want?</h1>
+
+        <div class="search-box">
+          <div class="search-icon"><i class="fa fa-search search-icon"></i></div>
+          <form action="/search" class="search-form">
+            <input id="search" type="text" name = "keyword" placeholder="write keyword please.." autocomplete="off">
           </form>
+          <svg class="search-border" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:a="http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/" x="0px" y="0px" viewBox="0 0 671 111" style="enable-background:new 0 0 671 111;"
+           xml:space="preserve">
+              <path class="border" d="M335.5,108.5h-280c-29.3,0-53-23.7-53-53v0c0-29.3,23.7-53,53-53h280"/>
+              <path class="border" d="M335.5,108.5h280c29.3,0,53-23.7,53-53v0c0-29.3-23.7-53-53-53h-280"/>
+            </svg>
+          <div class="go-icon"><i class="fa fa-arrow-right"></i></div>
         </div>
-      </main>
+      </div>
+
+      <div class="popular_box">
+        <h5>Popular skills</h5>
+        <div class="btns">
+          <a href="/search?keyword=python">
+            <button class="popular_btn">python</button>
+          </a>
+          <a href="/search?keyword=css">
+            <button class="popular_btn">css</button>
+          </a>
+          <a href="/search?keyword=javascript"> 
+            <button class="popular_btn">javascript</button>
+          </a>
+          <a href="/search?keyword=typescript">
+            <button class="popular_btn">typescript</button>
+          </a>
+          <a href="/search?keyword=react">
+            <button class="popular_btn">react</button>
+          </a>
+          <a href="/search?keyword=flutter">
+            <button class="popular_btn">flutter</button>
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script src="/static/search_box.js"></script>
 </body>
 </html>
